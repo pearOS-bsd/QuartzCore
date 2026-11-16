@@ -26,3 +26,6 @@ test/*_ref
 test/bench
 test/scenes_ours
 test/scenes_real
+test/glasskeys_real
+test/glasskeys_ours
+test/glasskeys.ours.txt

@@ -1,16 +1,28 @@
 /* CAFilter: a filter type with its input values; the renderer reads the values by key (inputRadius, inputAmount, inputColorMatrix ...). */
 #import <QuartzCore/CAFilter.h>
+#include <math.h>
 
 NSString *const kCAFilterGaussianBlur = @"gaussianBlur", *const kCAFilterColorSaturate = @"colorSaturate", *const kCAFilterColorBrightness = @"colorBrightness", *const kCAFilterColorContrast = @"colorContrast",
 	*const kCAFilterColorMatrix = @"colorMatrix", *const kCAFilterColorInvert = @"colorInvert", *const kCAFilterColorHueRotate = @"colorHueRotate", *const kCAFilterMultiplyColor = @"multiplyColor",
-	*const kCAFilterLuminanceToAlpha = @"luminanceToAlpha", *const kCAFilterVibrantDark = @"vibrantDark", *const kCAFilterVibrantLight = @"vibrantLight";
+	*const kCAFilterLuminanceToAlpha = @"luminanceToAlpha", *const kCAFilterVibrantDark = @"vibrantDark", *const kCAFilterVibrantLight = @"vibrantLight",
+	*const kCAFilterGlassBackground = @"glassBackground", *const kCAFilterGlassForeground = @"glassForeground";
+
+#include "CAFilterGlass.inc"
+/* name -> atom and default of a glass filter key (used by the encoder of the render stream and by the renderer); returns 0 for an unknown key */
+unsigned CAFilterGlassKeyAtom(NSString *key, float *defaultValue)
+{
+#define X(n, a, d) if ([key isEqualToString:n]) { if (defaultValue) *defaultValue = (d); return a; }
+	CA_GLASS_BACKGROUND_KEYS(X) CA_GLASS_FOREGROUND_KEYS(X)
+#undef X
+	return 0;
+}
 
 @implementation CAFilter { NSString *_type, *_name; BOOL _enabled; NSMutableDictionary *_values; }
 @synthesize name = _name, type = _type;
 + (NSArray *)filterTypes
 {
 	return @[kCAFilterGaussianBlur, kCAFilterColorSaturate, kCAFilterColorBrightness, kCAFilterColorContrast, kCAFilterColorMatrix, kCAFilterColorInvert, kCAFilterColorHueRotate, kCAFilterMultiplyColor,
-	         kCAFilterLuminanceToAlpha, kCAFilterVibrantDark, kCAFilterVibrantLight];
+	         kCAFilterLuminanceToAlpha, kCAFilterVibrantDark, kCAFilterVibrantLight, kCAFilterGlassBackground, kCAFilterGlassForeground];
 }
 + (instancetype)filterWithType:(NSString *)type { return [[self alloc] initWithType:type]; }
 + (instancetype)filterWithName:(NSString *)name { return [[self alloc] initWithName:name]; }
@@ -32,6 +44,16 @@ NSString *const kCAFilterGaussianBlur = @"gaussianBlur", *const kCAFilterColorSa
 	if ([_type isEqual:kCAFilterMultiplyColor]) return @[@"inputColor"];
 	if ([_type isEqual:kCAFilterLuminanceToAlpha]) return @[@"inputPremultipliedValues"];
 	if ([_type isEqual:kCAFilterVibrantDark] || [_type isEqual:kCAFilterVibrantLight]) return @[@"inputColor0", @"inputColor1", @"inputReversed"];
+	if ([_type isEqual:kCAFilterGlassBackground]) { NSMutableArray *a = [NSMutableArray new];
+#define X(n, at, d) [a addObject:n];
+		CA_GLASS_BACKGROUND_KEYS(X)
+#undef X
+		return a; }
+	if ([_type isEqual:kCAFilterGlassForeground]) { NSMutableArray *a = [NSMutableArray new];
+#define X(n, at, d) [a addObject:n];
+		CA_GLASS_FOREGROUND_KEYS(X)
+#undef X
+		return a; }
 	return @[];
 }
 - (NSArray *)outputKeys { return @[]; }

@@ -42,9 +42,20 @@ check-values: test/values_real test/values_ours
 	./test/values_real > test/values.real.txt; ./test/values_ours > test/values.ours.txt
 	python3 -I test/cmp.py test/values.real.txt test/values.ours.txt 2e-6
 endif
+# glass filter keys and atoms: golden from the real QuartzCore (made on a Mac), checked on every platform
+ifeq ($(UNAME),Darwin)
+test/glasskeys_real: test/glasskeys.m
+	$(CC) -fobjc-arc -DREAL_CA -framework Foundation -framework QuartzCore -o $@ test/glasskeys.m
+test/glasskeys.txt: test/glasskeys_real
+	./test/glasskeys_real > $@
+endif
+test/glasskeys_ours: test/glasskeys.m $(LIB)
+	$(CC) $(CFLAGS) -o $@ test/glasskeys.m $(LIB) -ObjC $(FW)
+check-glasskeys: test/glasskeys_ours
+	./test/glasskeys_ours > test/glasskeys.ours.txt && diff test/glasskeys.txt test/glasskeys.ours.txt && echo "glass filter keys: identical to the real QuartzCore"
 clean:
 	rm -rf build build-mac test/values_real test/values_ours
-.PHONY: all clean check-values
+.PHONY: all clean check-values check-glasskeys
 ifeq ($(UNAME),Darwin)
 test/golden_real: test/golden.m
 	$(CC) -fobjc-arc -DREAL_CA -framework Foundation -framework QuartzCore -framework Metal -framework CoreGraphics -o $@ test/golden.m

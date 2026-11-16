@@ -3,7 +3,8 @@
 #import <QuartzCore/CABase.h>
 
 CA_EXTERN NSString *const kCAFilterGaussianBlur, *const kCAFilterColorSaturate, *const kCAFilterColorBrightness, *const kCAFilterColorContrast, *const kCAFilterColorMatrix, *const kCAFilterColorInvert,
-	*const kCAFilterColorHueRotate, *const kCAFilterMultiplyColor, *const kCAFilterLuminanceToAlpha, *const kCAFilterVibrantDark, *const kCAFilterVibrantLight;
+	*const kCAFilterColorHueRotate, *const kCAFilterMultiplyColor, *const kCAFilterLuminanceToAlpha, *const kCAFilterVibrantDark, *const kCAFilterVibrantLight,
+	*const kCAFilterGlassBackground, *const kCAFilterGlassForeground;   /* Liquid Glass (macOS 26): the body of the glass and the lens-like foreground; keys in src/CAFilterGlass.inc */
 
 @interface CAFilter : NSObject <NSCopying, NSMutableCopying>
 + (instancetype)filterWithType:(NSString *)type;
