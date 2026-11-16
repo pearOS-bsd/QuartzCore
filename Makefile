@@ -53,9 +53,19 @@ test/glasskeys_ours: test/glasskeys.m $(LIB)
 	$(CC) $(CFLAGS) -o $@ test/glasskeys.m $(LIB) -ObjC $(FW)
 check-glasskeys: test/glasskeys_ours
 	./test/glasskeys_ours > test/glasskeys.ours.txt && diff test/glasskeys.txt test/glasskeys.ours.txt && echo "glass filter keys: identical to the real QuartzCore"
+ifeq ($(UNAME),Darwin)
+test/sdf_real: test/sdf.m
+	$(CC) -fobjc-arc -framework Foundation -framework QuartzCore -framework CoreGraphics -o $@ test/sdf.m
+test/sdf.txt: test/sdf_real
+	./test/sdf_real > $@
+endif
+test/sdf_ours: test/sdf.m $(LIB)
+	$(CC) $(CFLAGS) -o $@ test/sdf.m $(LIB) -ObjC $(FW)
+check-sdf: test/sdf_ours
+	./test/sdf_ours > test/sdf.ours.txt && python3 -I test/cmp.py test/sdf.txt test/sdf.ours.txt 2e-6 && echo "SDF classes: identical to the real QuartzCore"
 clean:
 	rm -rf build build-mac test/values_real test/values_ours
-.PHONY: all clean check-values check-glasskeys
+.PHONY: all clean check-values check-glasskeys check-sdf
 ifeq ($(UNAME),Darwin)
 test/golden_real: test/golden.m
 	$(CC) -fobjc-arc -DREAL_CA -framework Foundation -framework QuartzCore -framework Metal -framework CoreGraphics -o $@ test/golden.m

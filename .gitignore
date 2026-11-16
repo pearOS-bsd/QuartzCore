@@ -29,3 +29,6 @@ test/scenes_real
 test/glasskeys_real
 test/glasskeys_ours
 test/glasskeys.ours.txt
+test/sdf_real
+test/sdf_ours
+test/sdf.ours.txt
