@@ -1,6 +1,6 @@
 #!/bin/sh
 # live.sh [port]: host side. Every 2 s fetches the Dock's stream (/tmp/ca.bin, /tmp/ca-ool-*) from the FreeBSD VM, draws it (cadraw.py, needs PIL + numpy)
-# and puts the picture on the screen of wsd (wsshow reloads the PPM). Start wsshow once in the VM: WS_SOCKET=/tmp/wsd.sock /root/dnew/wsshow /tmp/cadock.ppm 0 0 5 &
+# and puts the picture on the screen of WindowServer (wsshow reloads the PPM). Start wsshow once in the VM: WS_SOCKET=/tmp/WindowServer.sock /root/dnew/wsshow /tmp/cadock.ppm 0 0 5 &
 P=${1:-2222}; K="-i $HOME/fbsd-vm/id_ed25519 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=15 -q"
 D=$(mktemp -d); cd "$D" || exit 1; last=
 while :; do

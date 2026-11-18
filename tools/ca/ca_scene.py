@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ca_scene.py: a prototype of the CoreAnimation compositor of the render server (the part that will move into wsd as C).
+"""ca_scene.py: a prototype of the CoreAnimation compositor of the render server (the part that will move into WindowServer as C).
 
 It takes the commit stream that carender-stub keeps (ca.bin + ca-ool-<n>-<k>.bin), follows the layers of every context (set_object replaces a layer, delete drops it),
 gives every Image of a layer its pixels (the n-th image with attached data of a message takes the n-th out-of-line descriptor of that message) and paints the tree.
